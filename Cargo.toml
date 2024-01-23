@@ -1,0 +1,6 @@
+[workspace]
+resolver = "2"
+members = [
+    "ao3/data-types",
+    "ao3/find-new"
+]

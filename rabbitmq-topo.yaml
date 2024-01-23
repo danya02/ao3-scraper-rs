@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ao3
+---
+# This cluster will be used for communication between components
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+    name: message-broker
+    namespace: ao3
+---
+# This vhost is used by default
+apiVersion: rabbitmq.com/v1beta1
+kind: Vhost
+metadata:
+  name: default-vhost
+  namespace: ao3
+spec:
+  name: "/"
+  defaultQueueType: quorum
+  rabbitmqClusterReference:
+    name: message-broker
+---
+# This queue will store records for newly fetched objects
+apiVersion: rabbitmq.com/v1beta1
+kind: Queue
+metadata:
+  name: new-records
+  namespace: ao3
+spec:
+  name: new-records 
+  vhost: "/"
+  type: quorum
+  autoDelete: false
+  durable: true
+  rabbitmqClusterReference:
+    name: message-broker
+---
+# This queue will store work IDs which need fetching
+apiVersion: rabbitmq.com/v1beta1
+kind: Queue
+metadata:
+  name: new-works
+  namespace: ao3
+spec:
+  name: new-works 
+  vhost: "/"
+  type: quorum
+  autoDelete: false
+  durable: true
+  rabbitmqClusterReference:
+    name: message-broker
